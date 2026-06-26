@@ -3,14 +3,14 @@
 ## Component Categories
 
 Organize components by responsibility. Each category has a distinct role in the
-rendering pipeline.
+rendering pipeline. A sub-directory structure is recommended for clarity as the number of components grows.
 
-| Category         | Directory                      | Responsibility                         | Example                         |
-| ---------------- | ------------------------------ | -------------------------------------- | ------------------------------- |
-| **Page**         | `routes/`                      | Orchestrate page-level data and layout | `routes/products/+page.svelte`  |
-| **Feature**      | `web/components/features/`     | Domain-specific composite views        | `ProductList.svelte`            |
-| **Layout**       | `routes/` or `web/components/` | Shared structural wrappers             | `AppShell.svelte`               |
-| **UI Primitive** | `web/components/`              | Generic, reusable, context-free atoms  | `Button.svelte`, `Modal.svelte` |
+| Category         | Directory                        | Responsibility                         | Example                                           |
+| ---------------- | -------------------------------- | -------------------------------------- | ------------------------------------------------- |
+| **Page**         | `routes/`                        | Orchestrate page-level data and layout | `routes/products/+page.svelte`                    |
+| **Feature**      | `web/components/<feature>/` | Domain-specific composite views        | `web/components/products-list/ProductList.svelte` |
+| **Layout**       | `routes/` or `web/components/`   | Shared structural wrappers             | `AppShell.svelte`                                 |
+| **UI Primitive** | `web/components/ui`              | Generic, reusable, context-free atoms  | `Button.svelte`, `Modal.svelte`                   |
 
 ### Responsibility Rules
 
@@ -127,19 +127,19 @@ are imported by components and other stores.
 // web/stores/AuthStore.svelte.ts
 
 class AuthStore {
-    #user = $state<User | null>(null);
+  #user = $state<User | null>(null);
 
-    get user(): User | null {
-        return this.#user;
-    }
+  get user(): User | null {
+    return this.#user;
+  }
 
-    set user(value: User | null) {
-        this.#user = value;
-    }
+  set user(value: User | null) {
+    this.#user = value;
+  }
 
-    get isAuthenticated(): boolean {
-        return this.#user !== null;
-    }
+  get isAuthenticated(): boolean {
+    return this.#user !== null;
+  }
 }
 
 export const authStore = new AuthStore();
@@ -151,19 +151,21 @@ For state that differs between server and client, use SvelteKit's `browser`
 check:
 
 ```typescript
-import { browser } from '$app/environment';
+import { browser } from "$app/environment";
 
 class PreferencesStore {
-    #theme = $state(browser ? (localStorage.getItem('theme') ?? 'light') : 'light');
+  #theme = $state(
+    browser ? (localStorage.getItem("theme") ?? "light") : "light",
+  );
 
-    get theme(): string {
-        return this.#theme;
-    }
+  get theme(): string {
+    return this.#theme;
+  }
 
-    set theme(value: string) {
-        this.#theme = value;
-        if (browser) localStorage.setItem('theme', value);
-    }
+  set theme(value: string) {
+    this.#theme = value;
+    if (browser) localStorage.setItem("theme", value);
+  }
 }
 ```
 
@@ -176,11 +178,11 @@ functions, actions, and API endpoints.
 
 ```typescript
 // routes/products/+page.server.ts
-import type { PageServerLoad } from './$types';
+import type { PageServerLoad } from "./$types";
 
-export const load: PageServerLoad = async event => {
-    const products = await productRetriever.list(event.locals.user);
-    return { products };
+export const load: PageServerLoad = async (event) => {
+  const products = await productRetriever.list(event.locals.user);
+  return { products };
 };
 ```
 
@@ -206,23 +208,23 @@ and upgrade when available.
 
 ```typescript
 // routes/api/products/+server.ts
-import { buildEndpoint } from '$lib/api/infrastructure/utils/build-endpoint';
-import { CreateProductCommand } from '$lib/api/application/dto/commands/create-product.command';
+import { buildEndpoint } from "$lib/api/infrastructure/utils/build-endpoint";
+import { CreateProductCommand } from "$lib/api/application/dto/commands/create-product.command";
 
 export const GET = buildEndpoint({
-    requiresAuth: true,
-    handler: async (_command, { user }) => {
-        return productRetriever.list(user);
-    },
+  requiresAuth: true,
+  handler: async (_command, { user }) => {
+    return productRetriever.list(user);
+  },
 });
 
 export const POST = buildEndpoint({
-    requiresAuth: true,
-    schema: CreateProductCommand,
-    handler: async (command, { user }) => {
-        const product = await productCreator.create(command, user);
-        return { productId: product.id };
-    },
+  requiresAuth: true,
+  schema: CreateProductCommand,
+  handler: async (command, { user }) => {
+    const product = await productCreator.create(command, user);
+    return { productId: product.id };
+  },
 });
 ```
 
@@ -233,30 +235,30 @@ classes that throw `ApiError` on failure.
 
 ```typescript
 // web/services/products.service.ts
-import { ApiError } from '$lib/web/utils/api-client/api-error';
+import { ApiError } from "$lib/web/utils/api-client/api-error";
 
 class ProductsService {
-    async list(): Promise<Product[]> {
-        const res = await fetch('/api/products');
-        if (!res.ok) throw await ApiError.fromResponse(res);
-        return res.json();
-    }
+  async list(): Promise<Product[]> {
+    const res = await fetch("/api/products");
+    if (!res.ok) throw await ApiError.fromResponse(res);
+    return res.json();
+  }
 
-    async getById(id: string): Promise<Product> {
-        const res = await fetch(`/api/products/${id}`);
-        if (!res.ok) throw await ApiError.fromResponse(res);
-        return res.json();
-    }
+  async getById(id: string): Promise<Product> {
+    const res = await fetch(`/api/products/${id}`);
+    if (!res.ok) throw await ApiError.fromResponse(res);
+    return res.json();
+  }
 
-    async create(command: CreateProductCommand): Promise<{ productId: string }> {
-        const res = await fetch('/api/products', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(command),
-        });
-        if (!res.ok) throw await ApiError.fromResponse(res);
-        return res.json();
-    }
+  async create(command: CreateProductCommand): Promise<{ productId: string }> {
+    const res = await fetch("/api/products", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(command),
+    });
+    if (!res.ok) throw await ApiError.fromResponse(res);
+    return res.json();
+  }
 }
 
 export const productsService = new ProductsService();
@@ -339,13 +341,13 @@ Implement dark mode with CSS custom properties and a `data-theme` attribute.
 ```css
 /* app.css */
 :root {
-    --color-bg: #ffffff;
-    --color-text: #1a1a1a;
+  --color-bg: #ffffff;
+  --color-text: #1a1a1a;
 }
 
-[data-theme='dark'] {
-    --color-bg: #1a1a1a;
-    --color-text: #f5f5f5;
+[data-theme="dark"] {
+  --color-bg: #1a1a1a;
+  --color-text: #f5f5f5;
 }
 ```
 
