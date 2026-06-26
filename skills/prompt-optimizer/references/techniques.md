@@ -40,6 +40,7 @@ Message: {input}
 **Research**: Brown et al. (2020) "Language Models are Few-Shot Learners" — GPT-3 paper establishing few-shot as a core paradigm.
 
 Best practices:
+
 - 3-5 examples is the sweet spot. More than 7 rarely helps and wastes tokens.
 - Include at least one edge case example.
 - Order matters slightly — put the most representative example first.
@@ -281,6 +282,7 @@ When deciding whether to search the codebase or read a specific file:
 **When**: Configure based on your use case's risk tolerance.
 
 For proactive agents:
+
 ```xml
 <default_to_action>
 Implement changes rather than only suggesting them. If intent is unclear,
@@ -290,6 +292,7 @@ details instead of guessing.
 ```
 
 For conservative agents:
+
 ```xml
 <do_not_act_before_instructions>
 Do not make changes unless clearly instructed. Default to providing
@@ -340,6 +343,7 @@ explicitly requested.
 **Research**: OpenAI's prompting guide emphasizes "AI engineering is inherently an empirical discipline."
 
 Loop:
+
 1. Draft prompt
 2. Run on 10-20 test cases
 3. Score outputs (automated metrics + human review)
@@ -376,7 +380,7 @@ Loop:
 ## Quick Reference: Technique Selection by Task
 
 | Task | Primary Technique | Supporting Techniques |
-|------|-------------------|----------------------|
+| ------ | ------------------- | ---------------------- |
 | Classification | Zero-shot or Few-shot | Role prompting, Output format |
 | Code generation | Role + Instruction decomposition | Reflection, Examples |
 | Long document QA | Grounding in quotes | Document positioning, XML structure |

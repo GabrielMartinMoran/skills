@@ -1,0 +1,20 @@
+# Markdown linting rules for skills repo
+default: true
+# Allow HTML comments (credits section)
+MD033: false
+# SKILL.md files use "name:" in YAML frontmatter, not "title:"
+MD041:
+  front_matter_title: '^\s*name\s*[:=]'
+# Allow duplicate headings within the same section (reference files reuse headings)
+MD024:
+  siblings_only: true
+# Relax line length for long YAML frontmatter descriptions
+MD013:
+  line_length: 120
+  heading_line_length: 80
+  code_block_line_length: 120
+  tables: false
+  headings: false
+# Allow trailing punctuation in headings (questions, etc.)
+MD026:
+  punctuation: ".,;:!。，；：！"

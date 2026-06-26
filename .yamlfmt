@@ -1,0 +1,12 @@
+# yamlfmt configuration for skills repo
+# https://github.com/google/yamlfmt/blob/main/docs/config-file.md
+
+# Matches .yamllint's line-length rule
+max_line_length: 120
+
+# Matches .yamllint's relaxed extend
+indent: 2
+line_ending: lf
+include_document_start: false
+retain_line_breaks: true
+pad_line_comments: 1

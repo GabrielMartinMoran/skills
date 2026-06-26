@@ -1,6 +1,10 @@
 ---
 name: clean-svelte-architecture
 description: Clean Architecture patterns and best practices for SvelteKit applications. MUST use when designing SvelteKit project structure, creating new endpoints/components/services, reviewing code for architectural violations, setting up DI, configuring env vars, organizing tests, or establishing team conventions. Covers hexagonal architecture, DDD patterns, naming conventions, CSS architecture, component design, testability, semantic code, guard clauses, CQRS-lite, and quality enforcement.
+version: "1.0.0"
+author: Gabriel Martín Moran [moran.gabriel.95@gmail.com]
+license: "MIT"
+source: "https://github.com/GabrielMartinMoran/skills"
 ---
 
 # Clean Svelte Architecture
@@ -26,11 +30,11 @@ Reference this skill when:
 
 ## Complementary Skills
 
-| Skill                | Relationship                                    |
+| Skill | Relationship |
 | -------------------- | ----------------------------------------------- |
 | `clean-architecture` | General CA principles (dependency rule, layers) |
-| `clean-code`         | Code quality, naming, function size, comments   |
-| `svelte-code-writer` | Svelte 5 syntax, runes, component patterns      |
+| `clean-code` | Code quality, naming, function size, comments |
+| `svelte-code-writer` | Svelte 5 syntax, runes, component patterns |
 
 This skill applies Clean Architecture specifically to SvelteKit. Load the
 complementary skills for their domain-specific rules when needed.
@@ -92,38 +96,38 @@ Dependency direction: routes → web → infrastructure → application → doma
 (Never reverse — domain imports nothing from outer layers)
 ```
 
-| Layer               | What belongs                                                               | What is forbidden                   |
+| Layer | What belongs | What is forbidden |
 | ------------------- | -------------------------------------------------------------------------- | ----------------------------------- |
-| **domain/**         | Entities, value objects, repository interfaces, error types, domain events | Framework imports, DB clients, HTTP |
-| **application/**    | Use case services, commands with Zod schemas, DTOs, query/result objects   | HTTP requests, component imports    |
-| **infrastructure/** | Repository implementations, DB clients, external API adapters, mappers     | Business logic, presentation logic  |
-| **web/**            | Components, stores, frontend services, CSS, client-side utilities          | Business rules, direct DB access    |
-| **routes/**         | `+page.server.ts`, `+page.ts`, `+server.ts`, `+layout.server.ts`           | Business logic beyond delegation    |
+| **domain/** | Entities, value objects, repository interfaces, error types, domain events | Framework imports, DB clients, HTTP |
+| **application/** | Use case services, commands with Zod schemas, DTOs, query/result objects | HTTP requests, component imports |
+| **infrastructure/** | Repository implementations, DB clients, external API adapters, mappers | Business logic, presentation logic |
+| **web/** | Components, stores, frontend services, CSS, client-side utilities | Business rules, direct DB access |
+| **routes/** | `+page.server.ts`, `+page.ts`, `+server.ts`, `+layout.server.ts` | Business logic beyond delegation |
 
 ## Naming Conventions
 
-| Category        | Convention                       | Examples                                          |
+| Category | Convention | Examples |
 | --------------- | -------------------------------- | ------------------------------------------------- |
-| `.ts` files     | kebab-case                       | `user.repository.ts`, `create-order.command.ts`   |
-| `.svelte` files | PascalCase                       | `UserCard.svelte`, `OrderForm.svelte`             |
-| Services        | verb-noun class name             | `ProductRetriever`, `OrderCreator`, `UserRemover` |
-| Repo interfaces | `{Entity}Repository`             | `UserRepository`, `ProductRepository`             |
-| Repo impls      | `{Entity}{DataSource}Repository` | `UserPgRepository`, `ProductApiRepository`        |
-| Commands        | verb-noun `.command.ts` with Zod | `create-order.command.ts`, `get-user.command.ts`  |
-| Mappers         | `map{From}{To}`                  | `mapProductFromRow`, `mapOrderToDto`              |
-| Stores          | PascalCase `.svelte.ts`          | `AuthStore.svelte.ts`, `CartStore.svelte.ts`      |
-| Routes (dirs)   | kebab-case with `(group)`        | `projects/[id]/`, `(app)/dashboard/`              |
+| `.ts` files | kebab-case | `user.repository.ts`, `create-order.command.ts` |
+| `.svelte` files | PascalCase | `UserCard.svelte`, `OrderForm.svelte` |
+| Services | verb-noun class name | `ProductRetriever`, `OrderCreator`, `UserRemover` |
+| Repo interfaces | `{Entity}Repository` | `UserRepository`, `ProductRepository` |
+| Repo impls | `{Entity}{DataSource}Repository` | `UserPgRepository`, `ProductApiRepository` |
+| Commands | verb-noun `.command.ts` with Zod | `create-order.command.ts`, `get-user.command.ts` |
+| Mappers | `map{From}{To}` | `mapProductFromRow`, `mapOrderToDto` |
+| Stores | PascalCase `.svelte.ts` | `AuthStore.svelte.ts`, `CartStore.svelte.ts` |
+| Routes (dirs) | kebab-case with `(group)` | `projects/[id]/`, `(app)/dashboard/` |
 
 ## Reference Index
 
-| Reference                      | Read when...                                            | Covers                                                 |
+| Reference | Read when... | Covers |
 | ------------------------------ | ------------------------------------------------------- | ------------------------------------------------------ |
-| `references/architecture.md`   | Designing project structure, reviewing layer violations | Layers, dependency direction, DI, file naming          |
-| `references/backend.md`        | Creating services, repos, endpoints, DTOs               | Services, repos, CQRS, Zod validation, errors, mappers |
-| `references/frontend.md`       | Building components, routes, forms, state               | Components, SvelteKit routes, forms, state, CSS        |
-| `references/testing.md`        | Writing or reviewing tests                              | Unit, integration, component tests, factories          |
-| `references/quality.md`        | Code review, refactoring                                | Semantic code, guard clauses, boy scout, quality gates |
-| `references/infrastructure.md` | Configuring env vars, server-only code, DI wiring       | Env vars, server-only modules, hooks as DI             |
+| `references/architecture.md` | Designing project structure, reviewing layer violations | Layers, dependency direction, DI, file naming |
+| `references/backend.md` | Creating services, repos, endpoints, DTOs | Services, repos, CQRS, Zod validation, errors, mappers |
+| `references/frontend.md` | Building components, routes, forms, state | Components, SvelteKit routes, forms, state, CSS |
+| `references/testing.md` | Writing or reviewing tests | Unit, integration, component tests, factories |
+| `references/quality.md` | Code review, refactoring | Semantic code, guard clauses, boy scout, quality gates |
+| `references/infrastructure.md` | Configuring env vars, server-only code, DI wiring | Env vars, server-only modules, hooks as DI |
 
 ## Quick Reference Checklist
 

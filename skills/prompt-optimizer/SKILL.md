@@ -1,8 +1,10 @@
 ---
 name: prompt-optimizer
 description: "Optimize, review, and rewrite prompts for maximum effectiveness. Use this skill when the user wants to improve system prompts, agent instructions, CLAUDE.md files, AGENTS.md, skill SKILL.md files, MCP tool descriptions, tool schemas, few-shot examples, or any LLM-facing instruction text. Also trigger when the user says 'optimize prompt', 'improve this prompt', 'review my system prompt', 'make this prompt better', 'rewrite for Claude/GPT/LLM', 'prompt engineering', or asks to create a prompt from scratch for a specific task. Covers all prompt types: system prompts, user prompts, agent prompts, skill instructions, MCP server descriptions, tool definitions, and multi-agent orchestration prompts."
-author: Gabriel Martín Moran [gabriel.moran@fluxit.com.ar]
-version: 1.0.0
+version: "1.0.0"
+author: Gabriel Martín Moran [moran.gabriel.95@gmail.com]
+license: "MIT"
+source: "https://github.com/GabrielMartinMoran/skills"
 ---
 
 # Prompt Optimizer
@@ -14,11 +16,12 @@ You are an expert prompt engineer. Your job is to analyze, optimize, and create 
 **Conciseness is a feature, not a compromise.** Every token in a prompt competes for the model's attention. Bloated prompts dilute signal. The goal is the **minimum effective prompt**: the shortest instruction set that reliably produces the desired output.
 
 Three axioms:
-1. **Clarity > Cleverness** — Write for a brilliant but literal reader with zero context on your norms.
-2. **Show > Tell** — One good example outweighs a paragraph of description.
-3. **Structure > Prose** — Structured prompts (XML tags, clear sections) reduce ambiguity and improve instruction following.
 
----
+1. **Clarity > Cleverness** — Write for a brilliant but literal reader with zero context on your norms.
+1. **Show > Tell** — One good example outweighs a paragraph of description.
+1. **Structure > Prose** — Structured prompts (XML tags, clear sections) reduce ambiguity and improve instruction following.
+
+______________________________________________________________________
 
 ## Workflow
 
@@ -27,7 +30,7 @@ Three axioms:
 Determine what kind of prompt you're working with:
 
 | Type | Key Characteristics | Optimization Focus |
-|------|--------------------|--------------------|
+| ------------------------- | ---------------------------------------------------------- | --------------------------------------------------------------- |
 | **System prompt** | Sets identity, behavior, constraints for an API-driven app | Role clarity, constraint precision, edge case coverage |
 | **Agent/Agentic prompt** | Instructions for autonomous tool-using agents | Heuristics over rigid examples, tool guidance, state tracking |
 | **Skill / SKILL.md** | Reusable instruction package for Claude Code/OpenCode | Progressive disclosure, trigger description, bundled resources |
@@ -42,12 +45,12 @@ Determine what kind of prompt you're working with:
 For each prompt, evaluate against these dimensions (score 1-5 internally, don't show scores unless asked):
 
 1. **Clarity** — Is it unambiguous? Could a colleague follow it without extra context?
-2. **Conciseness** — Is every sentence necessary? Any redundancy?
-3. **Specificity** — Does it define the exact output format, constraints, and behavior?
-4. **Structure** — Does it use appropriate organization (XML tags, sections, numbered steps)?
-5. **Examples** — Does it include enough examples? Are they diverse?
-6. **Edge cases** — Does it handle failure modes, ambiguous inputs, boundary conditions?
-7. **Model-appropriateness** — Is it tuned for the target model's strengths?
+1. **Conciseness** — Is every sentence necessary? Any redundancy?
+1. **Specificity** — Does it define the exact output format, constraints, and behavior?
+1. **Structure** — Does it use appropriate organization (XML tags, sections, numbered steps)?
+1. **Examples** — Does it include enough examples? Are they diverse?
+1. **Edge cases** — Does it handle failure modes, ambiguous inputs, boundary conditions?
+1. **Model-appropriateness** — Is it tuned for the target model's strengths?
 
 ### Step 3: Apply Optimization Techniques
 
@@ -56,11 +59,12 @@ Read `references/techniques.md` for the full catalog of research-backed techniqu
 ### Step 4: Produce Output
 
 Deliver the optimized prompt with:
+
 - The rewritten prompt (ready to copy-paste)
 - A brief changelog explaining what changed and why (3-5 bullet points max)
 - If asked: a before/after comparison highlighting key improvements
 
----
+______________________________________________________________________
 
 ## Optimization Principles (Always Apply)
 
@@ -88,7 +92,7 @@ Deliver the optimized prompt with:
 ### Context & Role
 
 - **Role assignment in system prompt**: One sentence defining expertise and communication style.
-- **Provide motivation**: Explain *why* a constraint exists — models generalize from explanations better than from rules alone.
+- **Provide motivation**: Explain _why_ a constraint exists — models generalize from explanations better than from rules alone.
 - **Ground in quotes first** for long-document tasks: instruct the model to extract relevant quotes before reasoning.
 
 ### Agent-Specific (Agentic Prompts)
@@ -113,24 +117,24 @@ Deliver the optimized prompt with:
 - **Parameter hints in description** when the schema alone isn't enough.
 - **Agent-native descriptions**: Optimize for agent consumption, not human reading. Include failure modes and return value semantics.
 
----
+______________________________________________________________________
 
 ## Anti-Patterns to Eliminate
 
 These are the most common prompt failures to detect and fix:
 
 1. **Vague instructions**: "Make it good" → Specify what "good" means with criteria.
-2. **Redundant emphasis**: "IMPORTANT: CRITICAL: YOU MUST ALWAYS..." → State it once, clearly. Modern models don't need shouting.
-3. **Double negatives**: "Don't not include..." → Positive framing only.
-4. **Missing output format**: No template or example of desired output → Always include one.
-5. **Over-prompting**: Instructions so detailed they constrain beneficial model behavior → Remove instructions that micromanage what the model does well natively.
-6. **Under-prompting for edge cases**: Happy path only → Add handling for empty input, ambiguous requests, errors.
-7. **Prose walls**: Dense paragraphs of instructions → Break into structured sections with headers and tags.
-8. **Conflicting instructions**: Two rules that contradict → Resolve by priority or merge.
-9. **Stale model assumptions**: Tricks for older models that hurt newer ones (e.g., excessive "think step by step" for reasoning models that do it natively).
-10. **Motivation-free constraints**: Rules without explanation → Add brief "why" so the model can generalize.
+1. **Redundant emphasis**: "IMPORTANT: CRITICAL: YOU MUST ALWAYS..." → State it once, clearly. Modern models don't need shouting.
+1. **Double negatives**: "Don't not include..." → Positive framing only.
+1. **Missing output format**: No template or example of desired output → Always include one.
+1. **Over-prompting**: Instructions so detailed they constrain beneficial model behavior → Remove instructions that micromanage what the model does well natively.
+1. **Under-prompting for edge cases**: Happy path only → Add handling for empty input, ambiguous requests, errors.
+1. **Prose walls**: Dense paragraphs of instructions → Break into structured sections with headers and tags.
+1. **Conflicting instructions**: Two rules that contradict → Resolve by priority or merge.
+1. **Stale model assumptions**: Tricks for older models that hurt newer ones (e.g., excessive "think step by step" for reasoning models that do it natively).
+1. **Motivation-free constraints**: Rules without explanation → Add brief "why" so the model can generalize.
 
----
+______________________________________________________________________
 
 ## Cross-Model Notes
 
@@ -156,11 +160,13 @@ As of early 2026, frontier models (Claude 4.6, GPT-5.x, Gemini 3, Kimi K2.5, GLM
 ### Smaller / older open-weight models (7B-70B)
 
 For models significantly below frontier (Llama 3.x 8B/70B, Mistral, Phi, older Qwen):
+
 - **More few-shot examples** needed (5+ instead of 3). Pattern matching dominates over instruction following at this scale.
 - **Simpler structure** — avoid deeply nested XML. Flat sections with clear headers work better.
 - **Role prompting has outsized impact** — smaller models shift behavior more dramatically with persona assignments.
 - **Temperature=0** for deterministic tasks where consistency matters.
----
+
+______________________________________________________________________
 
 ## Evaluation Checklist
 
@@ -175,7 +181,7 @@ Before delivering an optimized prompt, verify:
 - [ ] **Example-rich**: Does it include examples for structured output tasks?
 - [ ] **Testable**: Can you write an eval that checks if the prompt works?
 
----
+______________________________________________________________________
 
 ## Reference Materials
 

@@ -3,43 +3,43 @@
 ## Service Naming
 
 Application services follow a verb-noun naming convention using a curated set of
-suffixes. Each suffix communicates the service's single responsibility.
+suffixes. Each suffix communicates the service's single responsibility. Here there are some examples of common suffixes and their responsibilities:
 
-| Suffix          | Responsibility                       | Example                                   |
+| Suffix | Responsibility | Example |
 | --------------- | ------------------------------------ | ----------------------------------------- |
-| `Retriever`     | Fetch data by criteria (read)        | `ProductRetriever`, `UserRetriever`       |
-| `Creator`       | Create new entities (write)          | `OrderCreator`, `InvoiceCreator`          |
-| `Remover`       | Delete/archive entities (write)      | `UserRemover`, `SessionRemover`           |
-| `Editor`        | Update existing entities (write)     | `ProfileEditor`, `SettingsEditor`         |
-| `Modifier`      | Apply a specific mutation (write)    | `PasswordModifier`, `StatusModifier`      |
-| `Validator`     | Check business rules (read, boolean) | `EmailValidator`, `CouponValidator`       |
-| `Generator`     | Produce derived values (read)        | `TokenGenerator`, `ReportGenerator`       |
-| `Authenticator` | Verify identity (read)               | `UserAuthenticator`, `TokenAuthenticator` |
-| `Synchronizer`  | Reconcile two data sources (write)   | `InventorySynchronizer`                   |
+| `Retriever` | Fetch data by criteria (read) | `ProductRetriever`, `UserRetriever` |
+| `Creator` | Create new entities (write) | `OrderCreator`, `InvoiceCreator` |
+| `Remover` | Delete/archive entities (write) | `UserRemover`, `SessionRemover` |
+| `Editor` | Update existing entities (write) | `ProfileEditor`, `SettingsEditor` |
+| `Modifier` | Apply a specific mutation (write) | `PasswordModifier`, `StatusModifier` |
+| `Validator` | Check business rules (read, boolean) | `EmailValidator`, `CouponValidator` |
+| `Generator` | Produce derived values (read) | `TokenGenerator`, `ReportGenerator` |
+| `Authenticator` | Verify identity (read) | `UserAuthenticator`, `TokenAuthenticator` |
+| `Synchronizer` | Reconcile two data sources (write) | `InventorySynchronizer` |
 
 ### Service Class Pattern
 
 ```typescript
 export class ProductCreator {
-    constructor(
-        private readonly productRepo: ProductRepository,
-        private readonly categoryRepo: CategoryRepository
-    ) {}
+  constructor(
+    private readonly productRepo: ProductRepository,
+    private readonly categoryRepo: CategoryRepository,
+  ) {}
 
-    async create(command: CreateProductCommand, user: User): Promise<Product> {
-        const category = await this.categoryRepo.findById(command.categoryId);
-        if (!category) {
-            throw new NotFoundError(`Category ${command.categoryId} not found`);
-        }
-        const product = new Product({
-            id: crypto.randomUUID(),
-            name: command.name,
-            categoryId: category.id,
-            createdBy: user.id,
-        });
-        await this.productRepo.save(product);
-        return product;
+  async create(command: CreateProductCommand, user: User): Promise<Product> {
+    const category = await this.categoryRepo.findById(command.categoryId);
+    if (!category) {
+      throw new NotFoundError(`Category ${command.categoryId} not found`);
     }
+    const product = new Product({
+      id: crypto.randomUUID(),
+      name: command.name,
+      categoryId: category.id,
+      createdBy: user.id,
+    });
+    await this.productRepo.save(product);
+    return product;
+  }
 }
 ```
 
@@ -57,21 +57,21 @@ Application services must receive all their dependencies through the constructor
 ```typescript
 // ✅ CORRECT: constructor receives interfaces
 export class ProductCreator {
-    constructor(
-        private readonly productRepo: ProductRepository,
-        private readonly categoryRepo: CategoryRepository
-    ) {}
+  constructor(
+    private readonly productRepo: ProductRepository,
+    private readonly categoryRepo: CategoryRepository,
+  ) {}
 
-    async execute(command: CreateProductCommand): Promise<Product> {
-        // Use the injected repos — never instantiate them
-    }
+  async execute(command: CreateProductCommand): Promise<Product> {
+    // Use the injected repos — never instantiate them
+  }
 }
 
 // ❌ WRONG: service instantiates its own dependency
 export class BadProductCreator {
-    async execute(command: CreateProductCommand): Promise<Product> {
-        const repo = new ProductPgRepository(db); // NEVER do this
-    }
+  async execute(command: CreateProductCommand): Promise<Product> {
+    const repo = new ProductPgRepository(db); // NEVER do this
+  }
 }
 ```
 
@@ -86,12 +86,12 @@ export class BadProductCreator {
 Repository contracts are defined in the domain layer. Implementations live in
 infrastructure and include the data source in their name.
 
-| Type               | Pattern                      | Example                  |
+| Type | Pattern | Example |
 | ------------------ | ---------------------------- | ------------------------ |
-| Interface (domain) | `{Entity}Repository`         | `UserRepository`         |
-| PostgreSQL impl    | `{Entity}PgRepository`       | `UserPgRepository`       |
-| External API impl  | `{Entity}ApiRepository`      | `PaymentApiRepository`   |
-| In-memory impl     | `{Entity}InMemoryRepository` | `UserInMemoryRepository` |
+| Interface (domain) | `{Entity}Repository` | `UserRepository` |
+| PostgreSQL impl | `{Entity}PgRepository` | `UserPgRepository` |
+| External API impl | `{Entity}ApiRepository` | `PaymentApiRepository` |
+| In-memory impl | `{Entity}InMemoryRepository` | `UserInMemoryRepository` |
 
 ### Repository Contracts
 
@@ -101,15 +101,15 @@ request objects, framework-specific types, or database row types.
 ```typescript
 // ✅ CORRECT: primitives and domain types
 export interface OrderRepository {
-    findById(id: string): Promise<Order | null>;
-    findByUser(userId: string): Promise<Order[]>;
-    save(order: Order): Promise<void>;
+  findById(id: string): Promise<Order | null>;
+  findByUser(userId: string): Promise<Order[]>;
+  save(order: Order): Promise<void>;
 }
 
 // ❌ INCORRECT: framework or infrastructure types
 export interface OrderRepository {
-    findById(id: string): Promise<OrderRow>; // Row type is infrastructure
-    findByUser(request: RequestEvent): Promise<Order[]>; // Framework type
+  findById(id: string): Promise<OrderRow>; // Row type is infrastructure
+  findByUser(request: RequestEvent): Promise<Order[]>; // Framework type
 }
 ```
 
@@ -117,23 +117,27 @@ export interface OrderRepository {
 
 ```typescript
 export class OrderPgRepository implements OrderRepository {
-    constructor(private readonly db: DatabaseClient) {}
+  constructor(private readonly db: DatabaseClient) {}
 
-    async findById(id: string): Promise<Order | null> {
-        const row = await this.db.selectFrom('orders').selectAll().where('id', '=', id).executeTakeFirst();
+  async findById(id: string): Promise<Order | null> {
+    const row = await this.db
+      .selectFrom("orders")
+      .selectAll()
+      .where("id", "=", id)
+      .executeTakeFirst();
 
-        if (!row) return null;
-        return mapOrderFromRow(row);
-    }
+    if (!row) return null;
+    return mapOrderFromRow(row);
+  }
 
-    async save(order: Order): Promise<void> {
-        const row = mapOrderToRow(order);
-        await this.db
-            .insertInto('orders')
-            .values(row)
-            .onConflict(oc => oc.column('id').doUpdateSet(row))
-            .execute();
-    }
+  async save(order: Order): Promise<void> {
+    const row = mapOrderToRow(order);
+    await this.db
+      .insertInto("orders")
+      .values(row)
+      .onConflict((oc) => oc.column("id").doUpdateSet(row))
+      .execute();
+  }
 }
 ```
 
@@ -146,12 +150,12 @@ Zod schema and the inferred TypeScript type.
 
 ```typescript
 // create-product.command.ts
-import { z } from 'zod';
+import { z } from "zod";
 
 export const CreateProductCommand = z.object({
-    name: z.string().min(1, 'Product name is required'),
-    price: z.number().positive('Price must be positive'),
-    categoryId: z.string().uuid('Invalid category ID'),
+  name: z.string().min(1, "Product name is required"),
+  price: z.number().positive("Price must be positive"),
+  categoryId: z.string().uuid("Invalid category ID"),
 });
 
 export type CreateProductCommand = z.infer<typeof CreateProductCommand>;
@@ -159,13 +163,13 @@ export type CreateProductCommand = z.infer<typeof CreateProductCommand>;
 
 ### Command Naming Convention
 
-| Verb   | Prefix    | HTTP Method | Example                     |
+| Verb | Prefix | HTTP Method | Example |
 | ------ | --------- | ----------- | --------------------------- |
-| List   | `list-`   | GET         | `list-products.command.ts`  |
-| Get    | `get-`    | GET         | `get-product.command.ts`    |
-| Create | `create-` | POST        | `create-product.command.ts` |
-| Update | `update-` | PUT         | `update-product.command.ts` |
-| Delete | `delete-` | DELETE      | `delete-product.command.ts` |
+| List | `list-` | GET | `list-products.command.ts` |
+| Get | `get-` | GET | `get-product.command.ts` |
+| Create | `create-` | POST | `create-product.command.ts` |
+| Update | `update-` | PUT | `update-product.command.ts` |
+| Delete | `delete-` | DELETE | `delete-product.command.ts` |
 
 ### Why Simplified CQRS
 
@@ -190,17 +194,17 @@ User Input → [Zod Validation] → Typed Command → Service → Domain
 
 ```typescript
 // +server.ts or +page.server.ts action
-import { buildEndpoint } from '$lib/api/infrastructure/utils/build-endpoint';
-import { CreateProductCommand } from '$lib/api/application/dto/commands/create-product.command';
+import { buildEndpoint } from "$lib/api/infrastructure/utils/build-endpoint";
+import { CreateProductCommand } from "$lib/api/application/dto/commands/create-product.command";
 
 export const POST = buildEndpoint({
-    requiresAuth: true,
-    schema: CreateProductCommand, // Zod validation happens here
-    handler: async (command, { user }) => {
-        // command is already validated and typed
-        const product = await productCreator.create(command, user);
-        return { productId: product.id };
-    },
+  requiresAuth: true,
+  schema: CreateProductCommand, // Zod validation happens here
+  handler: async (command, { user }) => {
+    // command is already validated and typed
+    const product = await productCreator.create(command, user);
+    return { productId: product.id };
+  },
 });
 ```
 
@@ -208,11 +212,11 @@ export const POST = buildEndpoint({
 
 ```typescript
 export const actions = {
-    create: async event => {
-        const raw = Object.fromEntries(await event.request.formData());
-        const command = CreateProductCommand.parse(raw); // throws ZodError on failure
-        await productCreator.create(command, event.locals.user);
-    },
+  create: async (event) => {
+    const raw = Object.fromEntries(await event.request.formData());
+    const command = CreateProductCommand.parse(raw); // throws ZodError on failure
+    await productCreator.create(command, event.locals.user);
+  },
 };
 ```
 
@@ -225,37 +229,43 @@ error codes; infrastructure maps them to HTTP status codes.
 
 ```typescript
 // domain/errors/app-error.ts
-export type AppErrorCode = 'UNAUTHORIZED' | 'FORBIDDEN' | 'NOT_FOUND' | 'VALIDATION' | 'CONFLICT' | 'INTERNAL';
+export type AppErrorCode =
+  | "UNAUTHORIZED"
+  | "FORBIDDEN"
+  | "NOT_FOUND"
+  | "VALIDATION"
+  | "CONFLICT"
+  | "INTERNAL";
 
 export class AppError extends Error {
-    constructor(
-        public readonly code: AppErrorCode,
-        message: string
-    ) {
-        super(message);
-        this.name = 'AppError';
-    }
+  constructor(
+    public readonly code: AppErrorCode,
+    message: string,
+  ) {
+    super(message);
+    this.name = "AppError";
+  }
 }
 
 // domain/errors/not-found.error.ts
 export class NotFoundError extends AppError {
-    constructor(message = 'Resource not found') {
-        super('NOT_FOUND', message);
-        this.name = 'NotFoundError';
-    }
+  constructor(message = "Resource not found") {
+    super("NOT_FOUND", message);
+    this.name = "NotFoundError";
+  }
 }
 ```
 
 ### HTTP Status Mapping
 
-| Error Class         | Code           | HTTP Status |
+| Error Class | Code | HTTP Status |
 | ------------------- | -------------- | ----------- |
-| `UnauthorizedError` | `UNAUTHORIZED` | 401         |
-| `ForbiddenError`    | `FORBIDDEN`    | 403         |
-| `NotFoundError`     | `NOT_FOUND`    | 404         |
-| `ValidationError`   | `VALIDATION`   | 400         |
-| `ConflictError`     | `CONFLICT`     | 409         |
-| `InternalError`     | `INTERNAL`     | 500         |
+| `UnauthorizedError` | `UNAUTHORIZED` | 401 |
+| `ForbiddenError` | `FORBIDDEN` | 403 |
+| `NotFoundError` | `NOT_FOUND` | 404 |
+| `ValidationError` | `VALIDATION` | 400 |
+| `ConflictError` | `CONFLICT` | 409 |
+| `InternalError` | `INTERNAL` | 500 |
 
 ### Throwing and Handling
 
@@ -288,38 +298,38 @@ effects and no dependencies.
 
 ### Naming Convention
 
-| Direction    | Pattern              | Example             |
+| Direction | Pattern | Example |
 | ------------ | -------------------- | ------------------- |
-| DB → Domain  | `map{Entity}FromRow` | `mapProductFromRow` |
-| Domain → DB  | `map{Entity}ToRow`   | `mapProductToRow`   |
-| Domain → DTO | `map{Entity}ToDto`   | `mapProductToDto`   |
+| DB → Domain | `map{Entity}FromRow` | `mapProductFromRow` |
+| Domain → DB | `map{Entity}ToRow` | `mapProductToRow` |
+| Domain → DTO | `map{Entity}ToDto` | `mapProductToDto` |
 
 ### Mapper Implementation
 
 ```typescript
 // infrastructure/mappers/product.mapper.ts
 
-import type { Product } from '$lib/api/domain/models/product';
-import type { ProductRow } from './types';
+import type { Product } from "$lib/api/domain/models/product";
+import type { ProductRow } from "./types";
 
 export function mapProductFromRow(row: ProductRow): Product {
-    return new Product({
-        id: row.id,
-        name: row.name,
-        price: row.price_cents / 100, // snake_case → camelCase + transform
-        categoryId: row.category_id,
-        createdAt: new Date(row.created_at),
-    });
+  return new Product({
+    id: row.id,
+    name: row.name,
+    price: row.price_cents / 100, // snake_case → camelCase + transform
+    categoryId: row.category_id,
+    createdAt: new Date(row.created_at),
+  });
 }
 
 export function mapProductToRow(product: Product): ProductRow {
-    return {
-        id: product.id,
-        name: product.name,
-        price_cents: Math.round(product.price * 100),
-        category_id: product.categoryId,
-        created_at: product.createdAt.toISOString(),
-    };
+  return {
+    id: product.id,
+    name: product.name,
+    price_cents: Math.round(product.price * 100),
+    category_id: product.categoryId,
+    created_at: product.createdAt.toISOString(),
+  };
 }
 ```
 
@@ -331,13 +341,13 @@ slow TypeScript compilation, and make code navigation harder.
 ```typescript
 // ❌ AVOID: barrel files that re-export everything
 // domain/index.ts
-export * from './models/user';
-export * from './models/product';
-export * from './repositories/user.repository';
+export * from "./models/user";
+export * from "./models/product";
+export * from "./repositories/user.repository";
 // ... 20 more re-exports
 
 // ✅ PREFER: direct imports
-import type { UserRepository } from '$lib/api/domain/repositories/user.repository';
+import type { UserRepository } from "$lib/api/domain/repositories/user.repository";
 ```
 
 Use barrel files sparingly, only for stable public APIs of a module with clear
