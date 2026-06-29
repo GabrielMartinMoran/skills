@@ -1,6 +1,6 @@
 ---
 name: clean-code
-description: "Clean code practices and principles for writing maintainable, readable, testable software. Use this skill when the user mentions code review, naming conventions, function too long, code smells, readable code, boy scout rule, single responsibility, refactor, clean up this code, hard to maintain, type annotations, guard clauses, SOLID, DRY, KISS, YAGNI, twelve factor, linter, formatter, error handling, magic numbers, code duplication, premature abstraction, god class, null handling, testing patterns, TDD, code quality score, semantic naming, control flow, law of demeter, encapsulation, command-query separation. Trigger on any request involving improving existing code quality, reviewing pull requests, establishing coding standards, or evaluating whether code is clean."
+description: "Clean code practices and principles for writing maintainable, readable, testable software. Use this skill when the user mentions code review, naming conventions, function too long, code smells, readable code, boy scout rule, single responsibility, refactor, clean up this code, hard to maintain, type annotations, guard clauses, SOLID, DRY, KISS, YAGNI, twelve factor, linter, formatter, error handling, magic numbers, code duplication, premature abstraction, god class, null handling, testing patterns, TDD, code quality score, semantic naming, control flow, law of demeter, encapsulation, command-query separation, data structures, primitive obsession, nested objects, flat data, typed objects, value objects, casing conventions, snake_case, camelCase, boundary mapping, foreign casing, language conventions. Trigger on any request involving improving existing code quality, reviewing pull requests, establishing coding standards, or evaluating whether code is clean."
 version: "1.0.0"
 author: Gabriel Martín Moran [moran.gabriel.95@gmail.com]
 license: "MIT"
@@ -111,6 +111,50 @@ Avoid Hungarian notation (prefixing names with type), type suffixes in variable
 names, and single-letter names except for loop indices in very short loops
 (`i`, `j`). A name should reveal intent without requiring the reader to trace
 its definition.
+
+### Consistent Internal Casing
+
+Casing is a convention, not a feature — but mixing conventions in the same file
+is a real source of silent bugs. The principle is the same regardless of
+language: pick one casing per identifier kind, apply it consistently across the
+codebase, and enforce it with a linter.
+
+- **One style per identifier kind.** Variables and functions share one casing;
+  types and classes share another; module-level constants share a third. Never
+  mix styles within a kind.
+- **Foreign casing is data, not code.** When an external system (REST API,
+  database, file format) hands you identifiers in a different casing, convert
+  them at the boundary — never let foreign casing leak into internal modules.
+- **Follow the ecosystem, then enforce.** The dominant convention for your
+  language is the right starting point. Linters, formatters, and code review
+  keep it consistent over time.
+
+**TypeScript illustration:**
+
+```typescript
+// camelCase for variables and functions
+const maxRetries = 3;
+function fetchUserById(id: string): Promise<User> { /* ... */ }
+
+// PascalCase for types, classes, and React components
+interface UserProfile { /* ... */ }
+class PaymentGateway { /* ... */ }
+function UserAvatar(props: AvatarProps): JSX.Element { /* ... */ }
+
+// UPPER_SNAKE_CASE for module-level constants
+const MAX_RETRY_COUNT = 3;
+const DEFAULT_PAGE_SIZE = 20;
+```
+
+The same shape applies in any language: one casing for variables and functions,
+another for types and classes, a third for constants. The specific style is a
+detail of your ecosystem; consistency is the principle.
+
+When your code consumes data from an external source (REST API, database, file
+format) that uses a different casing convention, convert it at the boundary —
+never let foreign casing leak into internal code. See
+`references/data-structures.md` for boundary adaptation patterns and
+transformation examples.
 
 ## Principle 2: Functions
 
@@ -235,6 +279,54 @@ if user.get_age() >= 18:
 # Compliance: telling
 user.enable_alcohol_purchase_if_eligible()
 ```
+
+### Data Structure Design
+
+Prefer **nested semantic data structures** over flat primitives. A collection
+of primitive fields (`street`, `city`, `zip`) that always travel together is
+really an `Address` value object — model it as one. Flat structures hide
+relationships between data points and force every consumer to reassemble the
+group manually.
+
+**Detect the smell:** When you pass the same three primitives to three different
+functions, those primitives belong in a type.
+
+```typescript
+// Primitive Obsession — three fields that always travel together
+function ship(street: string, city: string, zip: string): void { /* ... */ }
+function bill(street: string, city: string, zip: string): void { /* ... */ }
+function formatLabel(street: string, city: string, zip: string): string { /* ... */ }
+
+// Nested semantic structure — one type, one concept
+function ship(address: Address): void { /* ... */ }
+function bill(address: Address): void { /* ... */ }
+function formatLabel(address: Address): string { /* ... */ }
+```
+
+See `references/data-structures.md` for more transformation examples: address
+value objects, nested configuration structures, and converting parallel arrays
+into typed objects.
+
+### Boundary Casing Adaptation
+
+Convert foreign casing at the point of ingress — the API response handler,
+database mapper, or file parser. Every line of code past that boundary should
+work in the project's native casing. Foreign casing leakage increases cognitive
+load and makes a rename cascade through the entire codebase.
+
+```typescript
+// At the boundary: convert snake_case to camelCase once
+function mapUserFromApi(apiUser: { user_name: string; is_active: boolean }): User {
+  return {
+    userName: apiUser.user_name,
+    isActive: apiUser.is_active,
+  };
+}
+// All internal code now uses camelCase User objects
+```
+
+See `references/data-structures.md` for the full boundary mapping pattern and
+casing transformation examples.
 
 ## Principle 6: Error Handling — Handle Absence of Value Explicitly
 
@@ -479,6 +571,8 @@ concrete detection guide.
 | Tests | No assertions | Test that runs code but never checks output. Add assertions. |
 | Tests | Slow tests | Test that takes seconds. Mock external dependencies. |
 | Tests | Flaky tests | Test that sometimes passes, sometimes fails. Fix non-determinism. |
+| Data | Primitive Obsession | Same primitives (`street`, `city`, `zip`) repeated across signatures. Group into a value object. |
+| Naming | Inconsistent casing | `snake_case` and `camelCase` in the same file. Pick one per language, enforce with linter. |
 
 ## Common Mistakes
 
@@ -496,6 +590,8 @@ These mistakes appear in codebases of all sizes. Learn to spot them quickly.
 | Refactoring without tests | Changing code structure with no safety net risks regressions. | Write characterization tests first, then refactor under green. |
 | Inconsistent conventions | Half the codebase uses `snake_case`, half uses `camelCase`. | Pick one convention per language. Enforce with a linter. |
 | Overly defensive null checks | Scattering `if (x != null)` everywhere obscures the happy path. | Push null checks to the boundary. Use Optional or Null Object. |
+| Flat, disconnected data | Related primitives (`street`, `city`, `zip`) passed separately everywhere, hiding their relationship. | Group into a typed object or value object. See `references/data-structures.md`. |
+| Foreign casing leakage | `snake_case` from an API response appears in internal business logic. | Adapt casing at the ingress boundary only. See `references/data-structures.md`. |
 
 ## Code Applications by Language
 
