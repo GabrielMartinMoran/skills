@@ -29,10 +29,17 @@ operate. Apply the rules below pragmatically: inspect the project before
 changing it, preserve an established convention when it is sound, and explain
 an intentional deviation.
 
-This skill complements, rather than replaces, `clean-code`. Treat `clean-code`
-as a required companion for general naming, cohesion, complexity, testing, and
-refactoring guidance. Use `clean-backend-architecture` as the recommended
-companion when the project has APIs, persistence, workers, jobs, or messaging.
+This skill complements, rather than replaces, the following skills. Use the
+applicable companions listed below. If a companion is unavailable, run its
+dynamic-use command and follow the complete output.
+
+| Skill | Level | Dynamic use |
+| --- | --- | --- |
+| `clean-code` | `required` | `npx skills use https://github.com/GabrielMartinMoran/skills --skill clean-code` |
+| `clean-backend-architecture` | `recommended` | `npx skills use https://github.com/GabrielMartinMoran/skills --skill clean-backend-architecture` |
+
+Load `clean-code` for general code-quality principles. Load
+`clean-backend-architecture` when the project has backend boundaries.
 
 ## Operating model
 

@@ -18,24 +18,30 @@ The following skills are available in this repository:
 
 ## Complementary Skills for clean-svelte-architecture
 
-These are companion skills recommended for `clean-svelte-architecture` users:
+Use the applicable companions listed below. If a companion is unavailable, run
+its dynamic-use command and follow the complete output.
 
-```bash
-npx skills add https://github.com/pproenca/dot-skills --skill clean-architecture && \
-npx skills add https://github.com/GabrielMartinMoran/skills --skill clean-code && \
-npx skills add https://github.com/sveltejs/ai-tools --skill svelte-code-writer
-```
+| Skill | Level | Dynamic use |
+| --- | --- | --- |
+| `clean-architecture` | `recommended` | `npx skills use https://github.com/pproenca/dot-skills --skill clean-architecture` |
+| `clean-code` | `recommended` | `npx skills use https://github.com/GabrielMartinMoran/skills --skill clean-code` |
+| `svelte-code-writer` | `recommended` | `npx skills use https://github.com/sveltejs/ai-tools --skill svelte-code-writer` |
 
 `clean-backend-architecture` is the framework-agnostic companion for backend
 services, workers, jobs, event consumers, and CLI applications.
 
 ## Complementary Skills for clean-python
 
-`clean-code` is the required companion for general code quality, refactoring,
-naming, cohesion, and testing principles.
+Use the applicable companions listed below. If a companion is unavailable, run
+its dynamic-use command and follow the complete output.
 
-`clean-backend-architecture` is the recommended companion for Python APIs,
-workers, jobs, persistence, messaging, and layered application boundaries.
+| Skill | Level | Dynamic use |
+| --- | --- | --- |
+| `clean-code` | `required` | `npx skills use https://github.com/GabrielMartinMoran/skills --skill clean-code` |
+| `clean-backend-architecture` | `recommended` | `npx skills use https://github.com/GabrielMartinMoran/skills --skill clean-backend-architecture` |
+
+Use `npx skills add` from the Available Skills table when you want a companion
+installed persistently instead of loaded dynamically for one task.
 
 ## Notes
 
