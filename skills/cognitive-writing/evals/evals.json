@@ -1,0 +1,57 @@
+{
+  "skill_name": "cognitive-writing",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Rewrite this dense README for a developer who needs a fast first success. Preserve every command, prerequisite, security warning, limitation, and link. Use a clear information hierarchy, a quick-start path, and progressive disclosure for deeper detail. Return the complete rewritten README in English, followed by a short fidelity note listing anything that remains uncertain.\n\n# EventRelay\n\nEventRelay is a Node service for receiving webhook events and forwarding them to internal consumers. It is intended for teams that need retries and a local development mode, but it is not a durable event store. Node 20 and Redis 7 are required. The documented installation is to run `npm ci`, copy `.env.example` to `.env`, and set `REDIS_URL`, `EVENT_RETRY_LIMIT`, and `LOG_LEVEL`. `EVENT_RETRY_LIMIT` defaults to 5 and cannot be greater than 20. The local server is started with `npm run dev`. For production, run `npm run build && npm start`.\n\nThe endpoint is `POST /v1/events` and returns `202 Accepted` after the event is queued. Events can be delivered more than once, so consumers must use the event ID for deduplication. Ordering is guaranteed only within a partition. The command `npm run reset` deletes all local Redis data and cannot be undone. Do not commit `.env` or place webhook secrets in logs. Rotate the webhook secret after a suspected leak. The API reference is at https://example.com/eventrelay/api and the deployment guide is at https://example.com/eventrelay/deploy.",
+      "expected_output": "A complete, scannable README that preserves technical content and creates a clear quick-start path without hiding warnings or changing commands.",
+      "files": [],
+      "expectations": [
+        "The output has a purpose statement and a quick-start path near the top.",
+        "Commands, prerequisites, warnings, limitations, and links are preserved.",
+        "Headings describe the content that follows, sections have visible purposes, and blocks support scanning.",
+        "Commands and literal values use code formatting, while warnings or constraints receive selective emphasis.",
+        "The output does not claim to be universally ADHD-proof or remove necessary complexity."
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Turn the following technical explanation into documentation for two readers: someone who needs the operational meaning quickly and someone who needs the rationale and edge cases. Keep all technical nuance, formal terminology, conditions, and tradeoffs. Use a short orientation section, a main explanation, a worked example, and clearly labeled deeper detail. Do not replace precise definitions with metaphors.\n\nAn event broker uses at-least-once delivery. The broker considers a message complete only after the consumer acknowledges it. If the consumer process performs an external side effect and crashes before sending the acknowledgement, the broker delivers the message again. The consumer therefore needs an idempotency key, normally the event ID, and a deduplication store. An idempotent handler produces the same externally observable result when it processes the same event more than once. This does not mean that every operation is automatically safe to repeat. The deduplication record must remain for at least the maximum redelivery window; a shorter TTL saves storage but permits duplicates after eviction, while a longer TTL costs more storage. Exactly-once processing is not promised because the broker and the external side effect cannot share one atomic transaction. Ordering is guaranteed only for messages with the same partition key. A consumer that needs cross-partition ordering must add an application-level coordination mechanism, which reduces throughput and creates a new failure boundary.",
+      "expected_output": "A layered explanation with a concise operational summary, a coherent mental model, a correct example, and preserved exceptions and tradeoffs.",
+      "files": [],
+      "expectations": [
+        "The operational meaning appears before the deep rationale.",
+        "Technical terms are defined and used consistently.",
+        "The example is faithful to the explanation and does not erase edge cases.",
+        "Sections and deeper-detail blocks make the reading path visible without fragmenting the explanation.",
+        "The document offers depth through structure rather than oversimplification."
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Review and rewrite this procedure for a reader who may be interrupted, scanning on a small screen, or unfamiliar with the system. Preserve all prerequisites, conditional branches, expected results, and recovery instructions. Make each meaningful action explicit, put conditions before actions, and keep the critical path short. Return the revised procedure and then a concise review of the main cognitive-load problems you fixed.\n\nTo rotate the production API secret, first make sure the Cloud CLI is installed, that you are logged into the production account with the secrets-admin role, and that the current secret has been backed up in the approved vault. It is recommended to do the rotation in staging first, but this is sometimes skipped when the secret is believed to be compromised. Create a second active secret before revoking the first one, deploy the new secret, and then call the health endpoint. If the health endpoint returns anything other than 200, inspect the deployment logs; if the service is still using the old secret, redeploy after checking the environment binding, but if the new secret is invalid, re-enable the old secret within 15 minutes and open an incident. Once health is 200 and one authenticated request succeeds, revoke the old secret. For a suspected leak, do not wait for the normal change window, and notify Security. Never paste either secret into the ticket or shell history. The final check is to confirm that the old secret returns 401 and the new secret returns 200.",
+      "expected_output": "A task-focused procedure with visible prerequisites, numbered sequential steps, expected outcomes, explicit conditions, and recovery paths.",
+      "files": [],
+      "expectations": [
+        "Prerequisites appear before the first action.",
+        "Sequential actions use a numbered list with parallel imperative phrasing.",
+        "Conditions and failure recovery are visible at the point of need.",
+        "Commands, expected results, and warnings are visually distinct for a semantic reason.",
+        "The review identifies information architecture or cognitive-load issues rather than only grammar preferences."
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "Rewrite this policy or decision memo so a busy reader can understand the decision, scope, consequences, and exceptions without reading every paragraph. Preserve the rationale, evidence, uncertainty, and dissenting tradeoffs. Use an opening decision summary, descriptive headings, a requirements section, and a clearly separated rationale. Avoid hype and do not turn qualified claims into absolute claims.\n\nProposal: reduce default retention for production application logs from 90 days to 30 days to lower storage cost and reduce exposure of personal data. The change applies to application logs in production and does not apply to security audit logs, legal holds, or incident records. Teams must document any exception, identify the data owner, and set an expiry date. The cost model estimates a 28% reduction in storage spend, but the estimate uses one quarter of traffic and has not been validated during a seasonal peak. Privacy has reviewed the proposal and supports the shorter default. The incident response team is concerned that 30 days may be insufficient for slow-moving abuse investigations. The recommended decision is a four-week pilot with two teams, during which operators measure investigation lookback time, storage spend, and exception frequency. If either team cannot complete a representative investigation, retain 90 days for that workload and revise the policy before wider rollout. The policy owner reviews the result after the pilot. This proposal changes the default; it does not delete existing data immediately and it does not guarantee a 28% saving.",
+      "expected_output": "A decision-focused document that surfaces the decision and scope early while preserving evidence, uncertainty, requirements, exceptions, and tradeoffs.",
+      "files": [],
+      "expectations": [
+        "The decision and scope are visible near the beginning.",
+        "Mandatory requirements are distinguishable from rationale and recommendations.",
+        "Exceptions, uncertainty, and tradeoffs remain explicit.",
+        "Sections separate decision, requirements, rationale, evidence, and consequences.",
+        "The visual hierarchy improves attention without decorative over-formatting or clickbait."
+      ]
+    }
+  ]
+}
