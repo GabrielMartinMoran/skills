@@ -1,16 +1,17 @@
 ---
 name: cognitive-writing
 description: >-
-  Write, rewrite, review, and structure documentation and general text for
-  cognitive accessibility, clarity, focus, and impact. Use this skill whenever
-  the user asks for a README, guide, tutorial, reference, explanation, policy,
-  report, specification, long-form text, dense-content rewrite, plain-language
-  edit, accessibility improvement, better scannability, ADHD-friendly or
-  neurodivergent-friendly content, information prioritization, or visual text
-  hierarchy, even when they do not name cognitive accessibility explicitly.
-  Preserve technical accuracy, necessary complexity, caveats, and user intent
-  while improving how easily readers can enter, scan, understand, remember, and
-  act on the content.
+  ALWAYS use this skill whenever the user wants to write, rewrite, review, or
+  structure any content: documentation, READMEs, guides, tutorials,
+  specifications, reports, emails, commit messages, code comments, blog posts,
+  UI copy, or any other text, in any language or medium. Apply
+  cognitive-accessibility, clarity, and information-hierarchy practices so text
+  is easier to enter, scan, understand, remember, and act on. Preserve
+  technical accuracy, nuance, caveats, and user intent while removing avoidable
+  cognitive load, redundancy, and noise. Use it even when the user does not
+  name cognitive accessibility, but asks for a plain-language edit, better
+  scannability, impact, or a focused rewrite. When in doubt whether a writing
+  or rewriting task qualifies, load the skill anyway.
 license: "MIT"
 metadata:
   version: "0.1.0"
